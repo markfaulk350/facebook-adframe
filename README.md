@@ -2,11 +2,11 @@
 <br />
 <p align="center">
   <a href="https://adframe.io">
-    <img src="docs/images/logo.png" alt="Avatar" width="150">
+    <img src="docs/images/logo.png" width="150">
   </a>
 
   <h3 align="center">
-    <a href="#"><strong>Adframe.io</strong></a>
+    <a href="https://adframe.io"><strong>Adframe.io</strong></a>
   </h3>
 
   <p align="center">
@@ -36,10 +36,18 @@
 * [Facebook Business SDK for NodeJS](https://www.npmjs.com/package/facebook-nodejs-business-sdk)
 * [Ad Campaign Structure](https://developers.facebook.com/docs/marketing-api/campaign-structure)
 * [Google Sheet with Facebook Ads](https://docs.google.com/spreadsheets/d/1KVPB4aYLS-q3DzjFjJ56XoDcYhCk6zRUcXJqKpSI9iA/edit#gid=0)
+* [Youtube Video on FB Marketing API](https://www.youtube.com/watch?v=to4uTxSNo6Q)
 
 
 ## Getting Started
 * Check out the [Getting Started Guide inside Facebook's API Docs](https://developers.facebook.com/docs/business-sdk/getting-started#js)
+
+* Go to [Facebook for developers](https://developers.facebook.com/) and create a developer account
+* Create an app. Select "Manage Business Integrations"
+* Copy the `App ID` from the Dashboard "274942674190815"
+* Copy the `App Secret` from "Settings", "Basic". "6b59817eabfd5db8d808a9f7c39e6a4c"
+* Visit the App Dashboard and add the "Marketing API" product to your app.
+* From the Dashboard, click on "Tools" at the top right. Then you should see "Access Token Tool". Copy the `App Token` into env.
 
 
 ## Ryans Instructions
