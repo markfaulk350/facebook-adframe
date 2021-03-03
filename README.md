@@ -1,12 +1,12 @@
-# Facebook Adframe.io
-
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-    <img href="https://adframe.io/assets/images/home/logo.png" alt="Avatar" width="100">
+  <a href="https://adframe.io">
+    <img src="docs/images/logo.png" alt="Avatar" width="150">
+  </a>
 
   <h3 align="center">
-    <a href="#"><strong>Adframe.io Facebook</strong></a>
+    <a href="#"><strong>Adframe.io</strong></a>
   </h3>
 
   <p align="center">
@@ -24,7 +24,7 @@
 </p>
 
 <!-- TABLE OF CONTENTS -->
-## Table of Contents
+# Table of Contents
 
 * [Important Links](#important-links)
 * [Getting Started](#getting-started)
