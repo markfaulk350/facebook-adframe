@@ -47,7 +47,9 @@
 * Copy the `App ID` from the Dashboard "274942674190815"
 * Copy the `App Secret` from "Settings", "Basic". "6b59817eabfd5db8d808a9f7c39e6a4c"
 * Visit the App Dashboard and add the "Marketing API" product to your app.
+* You can get an access token by going to the FB App Dashboard. On the left hand side-nav you should see the "Marketing API" product. Click on it, then click on "Tools", you should be able to generate an access token there.
 * From the Dashboard, click on "Tools" at the top right. Then you should see "Access Token Tool". Copy the `App Token` into env.
+* You can also get an access token from the Dashboard "Tools", "Graph API Explorer"
 
 
 ## Ryans Instructions
