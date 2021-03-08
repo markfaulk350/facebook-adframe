@@ -32,10 +32,12 @@
 
 
 ## Important Links
-* [Facebook Marketing API](https://developers.facebook.com/docs/marketing-apis/overview)
-* [Facebook Business SDK for NodeJS](https://www.npmjs.com/package/facebook-nodejs-business-sdk)
+* [FB Ads Center](https://business.facebook.com/latest/ad_center)
+* [FB Ads Manager](https://www.facebook.com/adsmanager/manage/campaigns)
+* [FB Marketing API](https://developers.facebook.com/docs/marketing-apis/overview)
+* [FB Business SDK for NodeJS](https://www.npmjs.com/package/facebook-nodejs-business-sdk)
 * [Ad Campaign Structure](https://developers.facebook.com/docs/marketing-api/campaign-structure)
-* [Google Sheet with Facebook Ads](https://docs.google.com/spreadsheets/d/1KVPB4aYLS-q3DzjFjJ56XoDcYhCk6zRUcXJqKpSI9iA/edit#gid=0)
+* [Google Sheet with FB Ads](https://docs.google.com/spreadsheets/d/1KVPB4aYLS-q3DzjFjJ56XoDcYhCk6zRUcXJqKpSI9iA/edit#gid=0)
 * [Youtube Video on FB Marketing API](https://www.youtube.com/watch?v=to4uTxSNo6Q)
 
 

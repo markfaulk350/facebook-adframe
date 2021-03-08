@@ -1,16 +1,17 @@
 // 3rd Party Imports
-require('dotenv').config()
-const chalk = require('chalk')
-const bizSdk = require('facebook-nodejs-business-sdk')
+import * as dotenv from 'dotenv'
+dotenv.config()
+import chalk from 'chalk'
+import bizSdk from 'facebook-nodejs-business-sdk'
 
 // Local Imports
-const helpers = require('./helpers')
+// import helpers from './helpers'
 
 // Constants
 const log = console.log
 
 // Run
-// async function main() {
+async function main() {
   log(chalk.greenBright(`---------- Running Facebook Script ----------`))
 
   const accessToken = process.env.FB_ACCESS_TOKEN
@@ -30,11 +31,13 @@ const log = console.log
       return account.getCampaigns([Campaign.Fields.name], { limit: 10 }) // fields array and params
     })
     .then(result => {
-      log({result: result})
+      log({ result: result })
       campaigns = result
       // campaigns.forEach(campaign => log(campaign.name))
     })
     .catch(console.error)
-// }
 
-// main()
+  log(chalk.redBright(`---------- End Facebook Script ----------`))
+}
+
+main()

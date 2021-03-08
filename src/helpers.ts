@@ -1,11 +1,11 @@
 function sleep(ms) {
   return new Promise(r => {
     setTimeout(() => {
-      r()
+      r(null)
     }, ms)
   })
 }
 
-module.exports = {
-  sleep,
+export {
+  sleep
 }
