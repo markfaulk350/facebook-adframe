@@ -5,6 +5,8 @@ const log = console.log
 const bizSdk = require('facebook-nodejs-business-sdk')
 const AdAccount = bizSdk.AdAccount
 const Campaign = bizSdk.Campaign
+const AdSet = bizSdk.AdSet
+const Ad = bizSdk.Ad
 
 async function getCampaigns(account) {
   try {
@@ -19,8 +21,7 @@ async function getCampaigns(account) {
       ],
       { limit: 10 },
     )
-    campaigns.forEach(campaign => log(campaign))
-    // return campaigns
+    return campaigns
   } catch (e) {
     log(e)
   }
@@ -42,7 +43,6 @@ async function createCampaign(account, name) {
 }
 
 async function createAdSet(account, campaign_id, name) {
-
   const unix_time = Date.now()
   const iso_string = new Date(unix_time).toISOString()
   // console.log(iso_string)
@@ -78,6 +78,7 @@ async function createAdSet(account, campaign_id, name) {
         facebook_positions: ['feed'],
         publisher_platforms: ['facebook', 'audience_network'],
       },
+      promoted_object: { page_id: '113315893898858' },
     })
 
     return new_ad_set
@@ -100,9 +101,48 @@ async function createAd(account, adset_id, name) {
   }
 }
 
+async function getAdSets(account) {
+  try {
+    const adsets = await account.getAdSets(
+      [
+        AdSet.Fields.name,
+        AdSet.Fields.targeting,
+        AdSet.Fields.daily_budget,
+        AdSet.Fields.bid_amount,
+        AdSet.Fields.promoted_object,
+      ],
+      {
+        limit: 10,
+      },
+    )
+    return adsets
+  } catch (e) {
+    log(e)
+  }
+}
+
+async function showCampaignFields() {
+  const campaign = new Campaign()
+  log({ campaign_fields: campaign._fields })
+}
+
+async function showAdSetFields() {
+  const adset = new AdSet()
+  log({ adset_fields: adset._fields })
+}
+
+async function showAdFields() {
+  const ad = new Ad()
+  log({ ad_fields: ad._fields })
+}
+
 module.exports = {
   getCampaigns,
   createCampaign,
   createAdSet,
   createAd,
+  getAdSets,
+  showCampaignFields,
+  showAdSetFields,
+  showAdFields,
 }
