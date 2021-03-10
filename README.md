@@ -37,7 +37,8 @@
 * [Ad Campaign Structure](https://developers.facebook.com/docs/marketing-api/campaign-structure)
 * [Google Sheet with Facebook Ads](https://docs.google.com/spreadsheets/d/1KVPB4aYLS-q3DzjFjJ56XoDcYhCk6zRUcXJqKpSI9iA/edit#gid=0)
 * [Youtube Video on FB Marketing API](https://www.youtube.com/watch?v=to4uTxSNo6Q)
-
+* [FB Nodejs SDK Github](https://github.com/facebook/facebook-nodejs-business-sdk)
+* [FB Interests Targeting](https://developers.facebook.com/docs/marketing-api/audiences/reference/targeting-search#interests)
 
 ## Getting Started
 * Check out the [Getting Started Guide inside Facebook's API Docs](https://developers.facebook.com/docs/business-sdk/getting-started#js)

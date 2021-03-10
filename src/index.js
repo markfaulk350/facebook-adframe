@@ -5,12 +5,13 @@ const bizSdk = require('facebook-nodejs-business-sdk')
 
 // Local Imports
 const helpers = require('./helpers')
+const fb = require('./fb')
 
 // Constants
 const log = console.log
 
 // Run
-// async function main() {
+async function main() {
   log(chalk.greenBright(`---------- Running Facebook Script ----------`))
 
   const accessToken = process.env.FB_ACCESS_TOKEN
@@ -18,23 +19,23 @@ const log = console.log
 
   const FacebookAdsApi = bizSdk.FacebookAdsApi.init(accessToken)
   const AdAccount = bizSdk.AdAccount
-  const Campaign = bizSdk.Campaign
-
   const account = new AdAccount(accountId)
-  var campaigns
+  // const Campaign = bizSdk.Campaign
+  // let campaigns
 
-  account
-    .read([AdAccount.Fields.name])
-    .then(account => {
-      // log(account)
-      return account.getCampaigns([Campaign.Fields.name], { limit: 10 }) // fields array and params
-    })
-    .then(result => {
-      log({result: result})
-      campaigns = result
-      // campaigns.forEach(campaign => log(campaign.name))
-    })
-    .catch(console.error)
-// }
+  // await fb.getCampaigns(account)
 
-// main()
+  // const new_campaign = await fb.createCampaign(account, '[C] Created Campaign')
+  // log(new_campaign)
+  // const new_campaign_id = new_campaign._data.id
+  // log(`New Campaign ID: ${new_campaign_id}`)
+
+  const new_campaign_id = '23847857089530119'
+
+  const new_ad_set = await fb.createAdSet(account, new_campaign_id, 'generated adset')
+  log(new_ad_set)
+
+  log(chalk.redBright(`---------- Ending Facebook Script ----------`))
+}
+
+main()
