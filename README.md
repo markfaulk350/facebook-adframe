@@ -73,3 +73,53 @@ Means of input: A list of interests on Facebook
 
 3. On the newly created Ad Set's Locations, set targeting to Arizona, California, Colorado, Connecticut, Florida, Georgia, Idaho, Illinois, Maryland, Michigan, New Jersey, North Carolina, Oregon, Pennsylvania, Tennessee, Texas, Utah, Virginia, Washington, Washington, District of Columbia
 
+# Object fields we are interested in
+### Campaign
+Fields in the UI
+* Campaign Name - ([C] name)
+* Special Ads Categories - (Housing)
+* Campaign Details
+  * Buying Type (Auction)
+  * Campiagn Objective - (Conversions)
+  * Campaign Spending Limit - optional
+* A/B Test - Not used
+* Campaign Budget Optimization - (On)
+  * Campaign Budget - (Daily)
+  * Amount ($10.00)
+  * Campaign Bid Strategy - (Lowest cost)
+
+```json 
+{
+  "name": "[C] Created Campaign",
+  "status": "PAUSED",
+  "objective": "CONVERSIONS",
+  "daily_budget": "1000",
+  "special_ad_categories": [ "HOUSING" ],
+  "special_ad_category": "HOUSING",
+  "bid_strategy": "LOWEST_COST_WITHOUT_CAP",
+  "id": "23847919864390119"
+}
+```
+
+### Ad Set
+Fields in the UI
+* Ad Set Name - ([AG] name)
+* Conversion
+  * Conversions event location - (Website, App, Messenger, WhatsApp)
+  * Pixel - (ID?)
+  * Conversion Event - (Lead, or lots of others)
+* Dynamic Creative - (off, we arent using it)
+* Budget & Schedule
+  * Start date/time
+  * end date/time
+* Audience - can create new audience or use saved one
+  * Exclusions
+  * Locations
+  * Age
+  * Gender
+  * Detailed Targeting
+    * Interests - (will be same as Ad Set Name)
+    * Detailed Targeting Expansion - (Off)
+  * Languages - (all)
+* Placements - (auto)
+* Optimization & Delivery - (conversions)

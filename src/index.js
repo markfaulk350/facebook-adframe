@@ -21,8 +21,16 @@ async function main() {
   const AdAccount = bizSdk.AdAccount
   const account = new AdAccount(accountId)
 
-  // const campaigns = await fb.getCampaigns(account)
-  // log(campaigns)
+  // const x = bizSdk.Campaign
+  // log(x)
+
+  const campaigns = await fb.getCampaigns(account)
+  log(campaigns[0]._data)
+  log(campaigns[1]._data)
+  log(campaigns[2]._data)
+
+  // log(campaigns[0]._data.special_ad_categories)
+
 
   // const new_campaign = await fb.createCampaign(account, '[C] Created Campaign')
   // log(new_campaign)

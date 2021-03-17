@@ -17,7 +17,12 @@ async function getCampaigns(account) {
       [
         Campaign.Fields.name,
         Campaign.Fields.status,
+        Campaign.Fields.objective,
+        Campaign.Fields.daily_budget,
+        // Campaign.Fields.campaign_optimization_type, // doesnt work!
         Campaign.Fields.special_ad_categories,
+        Campaign.Fields.special_ad_category,
+        Campaign.Fields.bid_strategy
       ],
       { limit: 10 },
     )
@@ -28,12 +33,16 @@ async function getCampaigns(account) {
 }
 
 async function createCampaign(account, name) {
+// https://developers.facebook.com/docs/marketing-api/reference/ad-campaign-group#fields
+
   try {
     campaign = await account.createCampaign([], {
       [Campaign.Fields.name]: name,
       [Campaign.Fields.status]: Campaign.Status.paused,
-      [Campaign.Fields.objective]: Campaign.Objective.page_likes,
-      [Campaign.Fields.special_ad_categories]: [],
+      [Campaign.Fields.objective]: Campaign.Objective.conversions,
+      [Campaign.Fields.special_ad_categories]: [ 'HOUSING' ], // NONE, EMPLOYMENT, HOUSING, CREDIT, ISSUES_ELECTIONS_POLITICS
+      [Campaign.Fields.bid_strategy]: 'LOWEST_COST_WITHOUT_CAP', // LOWEST_COST_WITHOUT_CAP, LOWEST_COST_WITH_BID_CAP, COST_CAP
+      [Campaign.Fields.daily_budget]: '1000' // cents
     })
 
     return campaign
