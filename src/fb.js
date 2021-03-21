@@ -2,6 +2,7 @@
 
 const log = console.log
 
+const axios = require('axios')
 const bizSdk = require('facebook-nodejs-business-sdk')
 const AdAccount = bizSdk.AdAccount
 const Campaign = bizSdk.Campaign
@@ -10,19 +11,15 @@ const Ad = bizSdk.Ad
 
 async function getCampaigns(account) {
   try {
-    let campaigns
-
-    // account = await account.read([AdAccount.Fields.name])
-    campaigns = await account.getCampaigns(
+    let campaigns = await account.getCampaigns(
       [
         Campaign.Fields.name,
         Campaign.Fields.status,
         Campaign.Fields.objective,
         Campaign.Fields.daily_budget,
-        // Campaign.Fields.campaign_optimization_type, // doesnt work!
         Campaign.Fields.special_ad_categories,
         Campaign.Fields.special_ad_category,
-        Campaign.Fields.bid_strategy
+        Campaign.Fields.bid_strategy,
       ],
       { limit: 10 },
     )
@@ -33,78 +30,19 @@ async function getCampaigns(account) {
 }
 
 async function createCampaign(account, name) {
-// https://developers.facebook.com/docs/marketing-api/reference/ad-campaign-group#fields
+  // https://developers.facebook.com/docs/marketing-api/reference/ad-campaign-group#fields
 
   try {
     campaign = await account.createCampaign([], {
-      [Campaign.Fields.name]: name,
+      [Campaign.Fields.name]: `[C] ${name}`,
       [Campaign.Fields.status]: Campaign.Status.paused,
       [Campaign.Fields.objective]: Campaign.Objective.conversions,
-      [Campaign.Fields.special_ad_categories]: [ 'HOUSING' ], // NONE, EMPLOYMENT, HOUSING, CREDIT, ISSUES_ELECTIONS_POLITICS
+      [Campaign.Fields.special_ad_categories]: ['HOUSING'], // NONE, EMPLOYMENT, HOUSING, CREDIT, ISSUES_ELECTIONS_POLITICS
       [Campaign.Fields.bid_strategy]: 'LOWEST_COST_WITHOUT_CAP', // LOWEST_COST_WITHOUT_CAP, LOWEST_COST_WITH_BID_CAP, COST_CAP
-      [Campaign.Fields.daily_budget]: '1000' // cents
+      [Campaign.Fields.daily_budget]: '1000', // cents
     })
 
     return campaign
-  } catch (e) {
-    log(e)
-  }
-}
-
-async function createAdSet(account, campaign_id, name) {
-  const unix_time = Date.now()
-  const iso_string = new Date(unix_time).toISOString()
-  // console.log(iso_string)
-  // 2021-03-10T19:46:57.638Z
-  let start_time = iso_string.split('.')[0]
-  start_time += '-0000'
-  // console.log(start_time)
-
-  try {
-    const new_ad_set = await account.createAdSet([], {
-      campaign_id,
-      name,
-      status: 'PAUSED',
-      bid_amount: '100',
-      billing_event: 'IMPRESSIONS',
-      daily_budget: '100',
-      // lifetime_budget: '20000',
-      start_time,
-      // end_time: '2021-03-10T11:38:37-0800',
-      optimization_goal: 'POST_ENGAGEMENT',
-      targeting: {
-        age_min: 20,
-        age_max: 24,
-        behaviors: [{ id: 6002714895372, name: 'All travelers' }],
-        genders: [1],
-        geo_locations: {
-          countries: ['US'],
-          regions: [{ key: '4081' }],
-          cities: [{ key: '777934', radius: 10, distance_unit: 'mile' }],
-        },
-        interests: [{ id: 6002925969459, name: 'watching movies' }],
-        life_events: [{ id: 6002714398172, name: 'Newlywed (1 year)' }],
-        facebook_positions: ['feed'],
-        publisher_platforms: ['facebook', 'audience_network'],
-      },
-      promoted_object: { page_id: '113315893898858' },
-    })
-
-    return new_ad_set
-  } catch (e) {
-    log(e)
-  }
-}
-
-async function createAd(account, adset_id, name) {
-  try {
-    const new_ad = await account.createAd([], {
-      name,
-      adset_id,
-      creative: { creative_id: '<adCreativeID>' },
-      status: 'PAUSED',
-    })
-    return new_ad
   } catch (e) {
     log(e)
   }
@@ -119,6 +57,8 @@ async function getAdSets(account) {
         AdSet.Fields.daily_budget,
         AdSet.Fields.bid_amount,
         AdSet.Fields.promoted_object,
+        AdSet.Fields.billing_event,
+        AdSet.Fields.optimization_goal,
       ],
       {
         limit: 10,
@@ -130,28 +70,102 @@ async function getAdSets(account) {
   }
 }
 
-async function showCampaignFields() {
-  const campaign = new Campaign()
-  log({ campaign_fields: campaign._fields })
+async function createAdSet(account, campaign_id, name) {
+  // https://developers.facebook.com/docs/marketing-api/reference/ad-campaign#fields
+
+  // Format we need:               2021-03-10T11:38:37-0800
+  // Format ISO String gives us:   2021-03-10T19:46:57.638Z
+
+  const unix_time = Date.now()
+  const iso_string = new Date(unix_time).toISOString()
+  // log(iso_string)
+  let start_time = iso_string.split('.')[0]
+  start_time += '-0000'
+  // log(start_time)
+
+  try {
+    // Keep in mind that when using speacial ads categories like "Housing" there are some fields we cant change, age, gender, etc...
+
+    const new_ad_set = await account.createAdSet([], {
+      campaign_id,
+      name: `[AG] ${name}`,
+      status: 'PAUSED',
+      billing_event: 'IMPRESSIONS',
+      optimization_goal: 'OFFSITE_CONVERSIONS',
+      start_time,
+      // end_time: '2021-03-10T11:38:37-0800',
+      targeting: {
+        age_min: 18,
+        age_max: 65,
+        // genders: [1],
+        flexible_spec: [
+          { interests: [{ id: 6003353550130, name: 'Motorcycles' }] },
+        ],
+        geo_locations: {
+          // countries: ['US'],
+          // location_types: [ 'home' ] // default + optional
+          regions: [
+            { key: '3847', name: 'California', country: 'US' },
+            { key: '3845', name: 'Arizona', country: 'US' },
+          ],
+        },
+        // brand_safety_content_filter_levels: [
+        //   'FACEBOOK_STANDARD',
+        //   'AN_STANDARD',
+        // ],
+      },
+      // promoted_object: {
+      //   pixel_id: '2796607230588778',
+      //   custom_event_type: 'LEAD',
+      // },
+    })
+
+    return new_ad_set
+  } catch (e) {
+    log(e)
+  }
 }
 
-async function showAdSetFields() {
-  const adset = new AdSet()
-  log({ adset_fields: adset._fields })
+async function createAd(account, adset_id, name) {
+  // Not finished, just copied an example!!!
+  try {
+    const new_ad = await account.createAd([], {
+      name,
+      adset_id,
+      creative: { creative_id: '<adCreativeID>' },
+      status: 'PAUSED',
+    })
+    return new_ad
+  } catch (e) {
+    log(e)
+  }
 }
 
-async function showAdFields() {
-  const ad = new Ad()
-  log({ ad_fields: ad._fields })
+async function getInterestSuggestions(access_token, keyword, limit) {
+  const url = `https://graph.facebook.com/search?type=adinterestsuggestion&interest_list=["${keyword}"]&limit=${limit}&locale=en_US&access_token=${access_token}`
+
+  try {
+    const res = await axios.get(url)
+
+    if (res.data && res.data.data.length > 0) {
+      const data = res.data.data
+      const values = data.map(x => ({
+        id: x.id,
+        name: x.name,
+        audience_size: x.audience_size,
+      }))
+      return values
+    }
+  } catch (e) {
+    log(e)
+  }
 }
 
 module.exports = {
   getCampaigns,
   createCampaign,
+  getAdSets,
   createAdSet,
   createAd,
-  getAdSets,
-  showCampaignFields,
-  showAdSetFields,
-  showAdFields,
+  getInterestSuggestions,
 }

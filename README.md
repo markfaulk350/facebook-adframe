@@ -39,6 +39,7 @@
 * [Youtube Video on FB Marketing API](https://www.youtube.com/watch?v=to4uTxSNo6Q)
 * [FB Nodejs SDK Github](https://github.com/facebook/facebook-nodejs-business-sdk)
 * [FB Interests Targeting](https://developers.facebook.com/docs/marketing-api/audiences/reference/targeting-search#interests)
+* [Generate FB interest ID's - Medium Article](https://medium.com/@interestexplorerio/how-to-use-the-facebook-marketing-api-to-reveal-1000s-of-interests-that-are-hidden-in-the-facebook-e20ee5bdcd17)
 
 ## Getting Started
 * Check out the [Getting Started Guide inside Facebook's API Docs](https://developers.facebook.com/docs/business-sdk/getting-started#js)
@@ -72,6 +73,11 @@ Means of input: A list of interests on Facebook
 
 
 3. On the newly created Ad Set's Locations, set targeting to Arizona, California, Colorado, Connecticut, Florida, Georgia, Idaho, Illinois, Maryland, Michigan, New Jersey, North Carolina, Oregon, Pennsylvania, Tennessee, Texas, Utah, Virginia, Washington, Washington, District of Columbia
+
+# Get Interest ID's
+```txt
+https://graph.facebook.com/search?type=adinterestsuggestion&interest_list=[“Golf”]&limit=10&locale=en_US&access_token=your-access-token
+```
 
 # Object fields we are interested in
 ### Campaign
