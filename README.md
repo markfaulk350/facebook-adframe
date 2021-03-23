@@ -129,3 +129,36 @@ Fields in the UI
   - Languages - (all)
 - Placements - (auto)
 - Optimization & Delivery - (conversions)
+
+```js
+{
+  campaign_id,
+  name: `[AG] ${name}`,
+  status: 'PAUSED',
+  billing_event: 'IMPRESSIONS',
+  optimization_goal: 'OFFSITE_CONVERSIONS',
+  start_time,
+  end_time: '2021-03-10T11:38:37-0800',
+  targeting: {
+    age_min: 18,
+    age_max: 65,
+    genders: [1],
+    flexible_spec: [
+      { interests: [{ id: 6003353550130, name: 'Motorcycles' }] },
+    ],
+    geo_locations: {
+      countries: ['US'],
+      location_types: ['home'], // default + optional
+      regions: [
+        { key: '3847', name: 'California', country: 'US' },
+        { key: '3845', name: 'Arizona', country: 'US' },
+      ],
+    },
+    brand_safety_content_filter_levels: ['FACEBOOK_STANDARD', 'AN_STANDARD'],
+  },
+  promoted_object: {
+    pixel_id: '2796607230588778',
+    custom_event_type: 'LEAD',
+  },
+}
+```
