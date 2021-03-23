@@ -9,6 +9,12 @@ const Campaign = bizSdk.Campaign
 const AdSet = bizSdk.AdSet
 const Ad = bizSdk.Ad
 
+async function initAccount(accessToken, accountId) {
+  const FacebookAdsApi = bizSdk.FacebookAdsApi.init(accessToken)
+  const account = new AdAccount(`act_${accountId}`)
+  return account
+}
+
 async function getCampaigns(account) {
   try {
     let campaigns = await account.getCampaigns(
@@ -126,35 +132,65 @@ async function createAdSet(account, campaign_id, name) {
   }
 }
 
-async function createAd(account, adset_id, name) {
-  // Not finished, just copied an example!!!
+// async function createAd(account, adset_id, name) {
+//   // Not finished, just copied an example!!!
+//   try {
+//     const new_ad = await account.createAd([], {
+//       name,
+//       adset_id,
+//       creative: { creative_id: '<adCreativeID>' },
+//       status: 'PAUSED',
+//     })
+//     return new_ad
+//   } catch (e) {
+//     log(e)
+//   }
+// }
+
+async function getInterestSuggestions(access_token, keyword, limit) {
+  // https://developers.facebook.com/docs/marketing-api/audiences/reference/targeting-search/#interest_suggestions
+
+  const url = `https://graph.facebook.com/search?type=adinterestsuggestion&interest_list=["${keyword}"]&limit=${limit}&locale=en_US&access_token=${access_token}`
+
+  // We can also filter by speacial ads categories like "HOUSING"
+  // &regulated_categories=[HOUSING]
+
   try {
-    const new_ad = await account.createAd([], {
-      name,
-      adset_id,
-      creative: { creative_id: '<adCreativeID>' },
-      status: 'PAUSED',
-    })
-    return new_ad
+    const res = await axios.get(url)
+    const data = res.data.data
+    return data
   } catch (e) {
     log(e)
   }
 }
 
-async function getInterestSuggestions(access_token, keyword, limit) {
-  const url = `https://graph.facebook.com/search?type=adinterestsuggestion&interest_list=["${keyword}"]&limit=${limit}&locale=en_US&access_token=${access_token}`
+async function getInterestId(access_token, keyword, limit) {
+  // https://developers.facebook.com/docs/marketing-api/audiences/reference/targeting-search#interests
+
+  const url = `https://graph.facebook.com/search?type=adinterest&q=${keyword}&limit=${limit}&locale=en_US&access_token=${access_token}`
 
   try {
     const res = await axios.get(url)
+    const data = res.data.data
+    // log(data)
 
-    if (res.data && res.data.data.length > 0) {
-      const data = res.data.data
-      const values = data.map(x => ({
-        id: x.id,
-        name: x.name,
-        audience_size: x.audience_size,
-      }))
-      return values
+    // Keywords are case sensitive and weird!!! (Examples on left work)
+    // "Home repair"       vs "home repair"
+    // "Home Appliances"   vs "Home appliances" - (The Case of the second word matters!!!)
+
+    // Convert the interest names & keyword to lowercase before checking for match.
+
+    // Find an exact match for the interest name, and return the ID
+    const record = data.find(
+      el => el.name.toLowerCase() === keyword.toLowerCase(),
+    )
+    // log(record)
+
+    if (record && record.id) {
+      // It might be best to return an object containing the interest name and ID so we know the capitalization is correct.
+      return record.id
+    } else {
+      return null
     }
   } catch (e) {
     log(e)
@@ -162,10 +198,12 @@ async function getInterestSuggestions(access_token, keyword, limit) {
 }
 
 module.exports = {
+  initAccount,
   getCampaigns,
   createCampaign,
   getAdSets,
   createAdSet,
-  createAd,
+  // createAd,
   getInterestSuggestions,
+  getInterestId,
 }
