@@ -4,6 +4,7 @@ const chalk = require('chalk')
 
 // Local Imports
 const fb = require('./fb')
+const sheets = require('./sheets')
 
 // Constants
 const log = console.log
@@ -16,6 +17,31 @@ async function main() {
   const accountId = process.env.FB_AD_ACCOUNT_ID
 
   const account = await fb.initAccount(accessToken, accountId)
+
+  const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
+
+  // const sheet = doc.sheetsByIndex[0] // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
+  // console.log(sheet.title)
+  // console.log(sheet.rowCount)
+
+  const data = await sheets.read_worksheets(doc)
+
+  let dict = []
+
+  // For each keyword get ID
+  for (let i = 0; i < 5; i++) {
+    const keyword = data[i];
+
+    const interest = await fb.getInterestId(accessToken, keyword, 10)
+
+    dict.push(interest)
+  }
+
+  log(dict)
+
+  const new_sheet = await doc.addSheet({title: 'Interests 2', headerValues: ['keyword', 'id', 'audience']})
+  const more_rows = await new_sheet.addRows(dict)
+
 
   // const campaigns = await fb.getCampaigns(account)
   // log(campaigns[0]._data)

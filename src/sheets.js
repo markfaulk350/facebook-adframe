@@ -1,0 +1,224 @@
+const ora = require('ora')
+const chalk = require('chalk')
+const log = console.log
+const { GoogleSpreadsheet } = require('google-spreadsheet')
+// const helpers = require('./general_purpose_helpers')
+// const _DEBUG_SHEET_LIMIT = 9999
+
+async function connect(sheet_id) {
+  try {
+    const doc = new GoogleSpreadsheet(sheet_id)
+
+    await doc.useServiceAccountAuth({
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/gm, '\n'),
+    })
+
+    await doc.loadInfo()
+
+    log(`"${doc.title}" - Loaded`)
+    log(`${doc.sheetsByIndex.length} worksheets available`)
+
+    return doc
+  } catch (e) {
+    log(e)
+  }
+}
+
+async function read_worksheets(doc) {
+  let data = []
+
+  try {
+    const num_of_sheets = doc.sheetsByIndex.length
+
+    // for (let i = 0; i < num_of_sheets; i++) {
+    //   const sheet = doc.sheetsByIndex[i]
+    //   const title = sheet.title ? sheet.title.trim() : ''
+    //   const rows = await sheet.getRows()
+    //   const rows_in_sheet = rows.length + 1
+    //   log(chalk.grey(`${title} has ${rows_in_sheet} rows`))
+
+    //   // log(rows[0]._rawData)
+    // }
+
+    const sheet = doc.sheetsByIndex[0]
+    const title = sheet.title ? sheet.title.trim() : ''
+    const rows = await sheet.getRows()
+    const rows_in_sheet = rows.length + 1
+    log(chalk.grey(`${title} has ${rows_in_sheet} rows including the header`))
+
+    let arr = []
+
+    for (let j = 0; j < rows.length; j++) {
+      let row = rows[j]._rawData[0]
+      arr.push(row)
+    }
+
+    // log(arr)
+
+    return arr
+  } catch (e) {
+    log(e)
+  }
+}
+
+// async function read_all_worksheets(sheets_doc) {
+
+//   for (let i = 0; i < sheets_doc.sheetsByIndex.length; i++) {
+//     const sheet = sheets_doc.sheetsByIndex[i]
+//     const sheet_title = sheet.title ? sheet.title.trim() : ''
+//     const sheet_rows = await sheet.getRows()
+
+//     if (sheet_title === 'Negative Keywords') {
+//       const spin = ora('Reading ' + sheet_title).start()
+
+//       negative_keywords = await get_keywords_arr_from_rows(sheet, sheet_rows)
+
+//       spin.succeed(
+//         chalk.blueBright(sheet_title) +
+//           ' sheet | Scraped ' +
+//           negative_keywords.length +
+//           ' keywords',
+//       )
+//       log(
+//         chalk.gray(
+//           ' "' + negative_keywords.slice(0, 3).join('", "') + '" [...]',
+//         ),
+//       )
+//     } else if (sheet_title === 'Geo-Inclusion') {
+//       const spin = ora('Reading ' + sheet_title).start()
+
+//       geolocation_inclusions = await get_keywords_arr_from_rows(
+//         sheet,
+//         sheet_rows,
+//       )
+
+//       spin.succeed(
+//         chalk.blueBright(sheet_title) +
+//           ' sheet | Scraped ' +
+//           geolocation_inclusions.length +
+//           ' locations',
+//       )
+//       log(
+//         chalk.gray(
+//           ' "' +
+//             (geolocation_inclusions.slice(0, 3).join('", "') + '"').substring(
+//               0,
+//               process.stdout.columns - 10,
+//             ) +
+//             ' [...]',
+//         ),
+//       )
+//     } else if (sheet_title === 'Geo-Exclusion') {
+//       const spin = ora('Reading ' + sheet_title).start()
+
+//       geolocation_exclusions = await get_keywords_arr_from_rows(
+//         sheet,
+//         sheet_rows,
+//       )
+
+//       spin.succeed(
+//         chalk.blueBright(sheet_title) +
+//           ' sheet | Scraped ' +
+//           geolocation_exclusions.length +
+//           ' locations',
+//       )
+//       log(
+//         chalk.gray(
+//           ' "' +
+//             (geolocation_exclusions.slice(0, 3).join('", "') + '"').substring(
+//               0,
+//               process.stdout.columns - 10,
+//             ) +
+//             ' [...]',
+//         ),
+//       )
+//     } else {
+//       const spin = ora('Reading ' + sheet_title).start()
+
+//       const keyword_list_obj = {
+//         title: sheet_title,
+//         words: await get_keywords_arr_from_rows(sheet, sheet_rows),
+//       }
+
+//       keyword_lists.push(keyword_list_obj)
+//       keyword_lists_titles.push(keyword_list_obj.title)
+
+//       spin.succeed(
+//         sheet_title +
+//           ' sheet | Scraped ' +
+//           keyword_list_obj.words.length +
+//           ' keywords',
+//       )
+//       log(
+//         chalk.gray(
+//           ' "' +
+//             (keyword_list_obj.words.slice(0, 3).join('", "') + '"').substring(
+//               0,
+//               process.stdout.columns - 10,
+//             ) +
+//             ' [...]',
+//         ),
+//       )
+
+//       if (i >= _DEBUG_SHEET_LIMIT + (negative_keywords.length ? -1 : 0)) break
+//     }
+
+//     await helpers.sleep(3000)
+//   }
+
+//   return {
+//     negative_keywords,
+//     geolocation_exclusions,
+//     geolocation_inclusions,
+//     keyword_lists,
+//     keyword_lists_titles,
+//   }
+// }
+
+// // This function is called once per worksheet/campaign to read keywords from rows
+// async function get_keywords_arr_from_rows(sheet, sheet_rows) {
+//   // NOTE: sheet_rows.length returns 1 less than expected which is why we are adding 1
+//   let num_of_rows_in_sheet = sheet_rows.length + 1
+
+//   // Load cells before processing
+//   await sheet.loadCells({
+//     startRowIndex: 0,
+//     endRowIndex: num_of_rows_in_sheet,
+//     startColumnIndex: 0,
+//     endColumnIndex: 1,
+//   })
+
+//   const keyword_arr = []
+
+//   for (let i = 0; i < num_of_rows_in_sheet; i++) {
+//     const cell = sheet.getCell(i, 0)
+//     // log(cell.valueType)
+//     // log(cell.value)
+
+//     try {
+//       if (cell.valueType === 'stringValue') {
+//         if (cell.value && cell.value.length && cell.value.trim().length) {
+//           keyword_arr.push(cell.value.trim())
+//         }
+//       }
+//       if (cell.valueType === 'numberValue') {
+//         if (cell.value) {
+//           keyword_arr.push(cell.value.toString())
+//         }
+//       }
+//     } catch (e) {
+//       // NOOP - don't need to handle empty cells etc.
+//     }
+//   }
+
+//   return keyword_arr
+// }
+
+module.exports = {
+  // extract_sheet_id_from_url,
+  // get_keywords_arr_from_rows,
+  connect,
+  read_worksheets,
+  // read_all_worksheets,
+}

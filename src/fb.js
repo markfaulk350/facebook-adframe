@@ -2,6 +2,7 @@
 
 const log = console.log
 
+
 const axios = require('axios')
 const bizSdk = require('facebook-nodejs-business-sdk')
 const AdAccount = bizSdk.AdAccount
@@ -168,7 +169,7 @@ async function getInterestId(access_token, keyword, limit) {
   // https://developers.facebook.com/docs/marketing-api/audiences/reference/targeting-search#interests
 
   const url = `https://graph.facebook.com/search?type=adinterest&q=${keyword}&limit=${limit}&locale=en_US&access_token=${access_token}`
-
+  
   try {
     const res = await axios.get(url)
     const data = res.data.data
@@ -185,12 +186,13 @@ async function getInterestId(access_token, keyword, limit) {
       el => el.name.toLowerCase() === keyword.toLowerCase(),
     )
     // log(record)
+    // log(data)
 
-    if (record && record.id) {
+    if (record && record.id && record.name) {
       // It might be best to return an object containing the interest name and ID so we know the capitalization is correct.
-      return record.id
+      return { id: record.id , keyword: record.name, audience: record.audience_size }
     } else {
-      return null
+      return { id: "" , audience: "", keyword }
     }
   } catch (e) {
     log(e)
