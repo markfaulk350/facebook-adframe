@@ -199,6 +199,32 @@ async function getInterestId(access_token, keyword, limit) {
   }
 }
 
+async function getRegionId(access_token, keyword, limit) {
+  const url = `https://graph.facebook.com/search?location_types=["region"]&type=adgeolocation&q=${keyword}&limit=${limit}&access_token=${access_token}`
+
+  try {
+    const res = await axios.get(url)
+    const data = res.data.data
+    // log(data)
+
+    // Convert the region names & keyword to lowercase before checking for match.
+
+    // Find an exact match for the region name, and return the key
+    const region = data.find(
+      el => el.name.toLowerCase() === keyword.toLowerCase(),
+    )
+
+    if (region && region.key && region.name && region.country_code) {
+      return { key: region.key, country_code: region.country_code, name: region.name }
+    } else {
+      return { key: "", country_code: "", name: keyword }
+    }
+  } catch (e) {
+    log(e)
+  }
+}
+
+
 module.exports = {
   initAccount,
   getCampaigns,
@@ -208,4 +234,5 @@ module.exports = {
   // createAd,
   getInterestSuggestions,
   getInterestId,
+  getRegionId
 }

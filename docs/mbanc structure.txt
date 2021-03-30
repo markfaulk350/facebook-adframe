@@ -1,0 +1,70 @@
+[C] Alabama
+
+[AG] Credit - Location: Alabama
+         Credit (finance)
+         Credit history
+         Credit Karma
+         Credit score in the United States
+         Credit Sesame
+         Credit Cards
+         Credit Card Interest
+         Credit card balance transfer
+         Credit Union
+         Credit Limit
+         Consumer Debt
+         Experian
+         Credit card interest
+         Credit cards
+         Credit limit
+         Credit union
+         Line of credit
+         Microcredit
+         Consumer debt
+         Government debt
+
+	[AG] Property Types 1
+	[AG] Property Types 2
+	[AG] Investing
+	[AG] Real Estate
+	[AG] Websites
+	[AG] Mortgage
+	[AG] Renting 
+	[AG] Renovation 
+	[AG] Employment 
+	[AG] Employment 2
+	[AG] Business 
+	[AG] Business 2
+	[AG] Computer
+	[AG] Finance
+	[AG] Finance 2
+	[AG] Vehicle
+	[AG] Insurance
+	[AG] Eco
+	[AG] House
+	[AG] Sciences
+	[AG] School
+	[AG] Lifestyle
+	
+[C] Arizona
+[C] California
+[C] Colorado
+[C] Connecticut
+[C] Florida
+[C] Georgia
+[C] Hawaii
+[C] Idaho
+[C] Illinois
+[C] Maryland
+[C] Michigan
+[C] New Jersey
+[C] Nevada
+[C] North Carolina
+[C] Ohio
+[C] Oregon
+[C] Pennsylvania
+[C] Tennessee
+[C] Texas
+[C] Utah
+[C] Virginia
+[C] Washington
+[C] Washington D.C., Washington, District of Columbia

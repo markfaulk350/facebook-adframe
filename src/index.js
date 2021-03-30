@@ -18,29 +18,32 @@ async function main() {
 
   const account = await fb.initAccount(accessToken, accountId)
 
-  const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
+  // const data = await fb.getRegionId(accessToken, "Washington D. C.", 20)
+  // log(data)
+
+  // const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
 
   // const sheet = doc.sheetsByIndex[0] // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
   // console.log(sheet.title)
   // console.log(sheet.rowCount)
 
-  const data = await sheets.read_worksheets(doc)
+  // const data = await sheets.read_worksheets(doc)
 
-  let dict = []
+  // let dict = []
 
   // For each keyword get ID
-  for (let i = 0; i < 5; i++) {
-    const keyword = data[i];
+  // for (let i = 0; i < 5; i++) {
+  //   const keyword = data[i];
 
-    const interest = await fb.getInterestId(accessToken, keyword, 10)
+  //   const interest = await fb.getInterestId(accessToken, keyword, 10)
 
-    dict.push(interest)
-  }
+  //   dict.push(interest)
+  // }
 
-  log(dict)
+  // log(dict)
 
-  const new_sheet = await doc.addSheet({title: 'Interests 2', headerValues: ['keyword', 'id', 'audience']})
-  const more_rows = await new_sheet.addRows(dict)
+  // const new_sheet = await doc.addSheet({title: 'Interests 2', headerValues: ['keyword', 'id', 'audience']})
+  // const more_rows = await new_sheet.addRows(dict)
 
 
   // const campaigns = await fb.getCampaigns(account)

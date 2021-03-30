@@ -1,0 +1,149 @@
+[C] Alabama
+	[AG] Alabama
+
+[C] Alaska
+	[AG] Alaska
+
+[C] Arizona
+	[AG] Arizona
+
+[C] Arkansas
+	[AG] Arkansas
+
+[C] California
+	[AG] California
+
+[C] Colorado
+	[AG] Colorado
+
+[C] Connecticut
+	[AG] Connecticut
+
+[C] Delaware
+	[AG] Delaware
+
+[C] Florida
+	[AG] Florida
+
+[C] Georgia
+	[AG] Georgia
+
+[C] Hawaii
+	[AG] Hawaii
+
+[C] Idaho
+	[AG] Idaho
+
+[C] Illinois
+	[AG] Illinois
+
+[C] Indiana
+	[AG] Indiana
+
+[C] Iowa
+	[AG] Iowa
+
+[C] Kansas
+	[AG] Kansas
+
+[C] Kentucky
+	[AG] Kentucky
+
+[C] Louisiana
+	[AG] Louisiana
+
+[C] Maine
+	[AG] Maine
+
+[C] Maryland
+	[AG] Maryland
+
+[C] Massachusetts
+	[AG] Massachusetts
+
+[C] Michigan
+	[AG] Michigan
+
+[C] Minnesota
+	[AG] Minnesota
+
+[C] Mississippi
+	[AG] Mississippi
+
+[C] Missouri
+	[AG] Missouri
+
+[C] Montana
+	[AG] Montana
+
+[C] Nebraska
+	[AG] Nebraska
+
+[C] Nevada
+	[AG] Nevada
+
+[C] New Hampshire
+	[AG] New Hampshire
+
+[C] New Jersey
+	[AG] New Jersey
+
+[C] New Mexico
+	[AG] New Mexico
+
+[C] New York
+	[AG] New York
+
+[C] North Carolina
+	[AG] North Carolina
+
+[C] North Dakota
+	[AG] North Dakota
+
+[C] Ohio
+	[AG] Ohio
+
+[C] Oklahoma
+	[AG] Oklahoma
+
+[C] Oregon
+	[AG] Oregon
+
+[C] Pennsylvania
+	[AG] Pennsylvania
+
+[C] Rhode Island
+	[AG] Rhode Island
+
+[C] South Carolina
+	[AG] South Carolina
+
+[C] South Dakota
+	[AG] South Dakota
+
+[C] Tennessee
+	[AG] Tennessee
+
+[C] Texas
+	[AG] Texas
+
+[C] Utah
+	[AG] Utah
+
+[C] Vermont
+	[AG] Vermont
+
+[C] Virginia
+	[AG] Virginia
+
+[C] Washington
+	[AG] Washington
+
+[C] West Virginia
+	[AG] West Virginia
+
+[C] Wisconsin
+	[AG] Wisconsin
+
+[C] Wyoming
+	[AG] Wyoming
