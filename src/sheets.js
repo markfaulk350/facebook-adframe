@@ -25,7 +25,7 @@ async function connect(sheet_id) {
   }
 }
 
-async function read_as_columns(doc, worksheet_name) {
+async function read_as_columns(doc, worksheet_name, include_headers) {
   try {
 
     const sheet = doc.sheetsByTitle[worksheet_name]
@@ -36,10 +36,9 @@ async function read_as_columns(doc, worksheet_name) {
 
     let arr = []
 
-    // NEED TO ADD COLUMN HEADERS FIRST!!!
-    // Push the header values AKA (campaign names) to first row
-    arr.push(sheet.headerValues);
-
+    if(include_headers) {
+      arr.push(sheet.headerValues)
+    }
 
     for (let j = 0; j < rows.length; j++) {
       let row = rows[j]._rawData
@@ -54,7 +53,7 @@ async function read_as_columns(doc, worksheet_name) {
   }
 }
 
-async function read_as_rows(doc, worksheet_name) {
+async function read_as_rows(doc, worksheet_name, include_headers) {
   try {
 
     const sheet = doc.sheetsByTitle[worksheet_name]
@@ -65,17 +64,56 @@ async function read_as_rows(doc, worksheet_name) {
 
     let arr = []
 
-    // NEED TO ADD COLUMN HEADERS FIRST!!!
-    // Push the header values AKA (campaign names) to first row
-    arr.push(sheet.headerValues);
-
-
+    if(include_headers) {
+      arr.push(sheet.headerValues)
+    }
+    
     for (let j = 0; j < rows.length; j++) {
       let row = rows[j]._rawData
       arr.push(row)
     }
 
     return arr
+  } catch (e) {
+    log(e)
+  }
+}
+
+async function read_rows_as_objects(doc, worksheet_name) {
+  try {
+    const rows = await read_as_rows(doc, worksheet_name, true)
+
+    // Now we have 
+    // rows = [
+    //   ['name', 'key'],
+    //   ['California', 123]
+    // ]
+    // And we want
+    // [{id: 123, name: 'California'}]
+
+    new_arr = []
+
+    // For each row
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+
+      let new_obj = {}
+
+      // For each row item, set key-value
+      for (let j = 0; j < row.length; j++) {
+        // What is the value?
+        const row_item = row[j];
+
+        // What is the key?
+        // In our case, the first row, and the index of the header in the row.
+        new_obj[row[0][j]] = row_item
+      }
+
+      new_arr.push(new_obj)
+    }
+
+    return new_arr
+
   } catch (e) {
     log(e)
   }
@@ -263,6 +301,7 @@ module.exports = {
   // get_keywords_arr_from_rows,
   connect,
   read_as_columns,
-  read_as_rows
+  read_as_rows,
+  read_rows_as_objects
   // read_all_worksheets,
 }
