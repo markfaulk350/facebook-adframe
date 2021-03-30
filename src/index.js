@@ -23,10 +23,6 @@ async function main() {
 
   // const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
 
-  // const sheet = doc.sheetsByIndex[0] // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
-  // console.log(sheet.title)
-  // console.log(sheet.rowCount)
-
   // const data = await sheets.read_worksheets(doc)
 
   // let dict = []

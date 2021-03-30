@@ -25,23 +25,10 @@ async function connect(sheet_id) {
   }
 }
 
-async function read_worksheets(doc) {
-  let data = []
-
+async function read_as_columns(doc, worksheet_name) {
   try {
-    const num_of_sheets = doc.sheetsByIndex.length
 
-    // for (let i = 0; i < num_of_sheets; i++) {
-    //   const sheet = doc.sheetsByIndex[i]
-    //   const title = sheet.title ? sheet.title.trim() : ''
-    //   const rows = await sheet.getRows()
-    //   const rows_in_sheet = rows.length + 1
-    //   log(chalk.grey(`${title} has ${rows_in_sheet} rows`))
-
-    //   // log(rows[0]._rawData)
-    // }
-
-    const sheet = doc.sheetsByIndex[0]
+    const sheet = doc.sheetsByTitle[worksheet_name]
     const title = sheet.title ? sheet.title.trim() : ''
     const rows = await sheet.getRows()
     const rows_in_sheet = rows.length + 1
@@ -49,17 +36,73 @@ async function read_worksheets(doc) {
 
     let arr = []
 
+    // NEED TO ADD COLUMN HEADERS FIRST!!!
+    // Push the header values AKA (campaign names) to first row
+    arr.push(sheet.headerValues);
+
+
     for (let j = 0; j < rows.length; j++) {
-      let row = rows[j]._rawData[0]
+      let row = rows[j]._rawData
       arr.push(row)
     }
 
-    // log(arr)
+    const columns = await convertRowsToColumns(arr)
+
+    return columns
+  } catch (e) {
+    log(e)
+  }
+}
+
+async function read_as_rows(doc, worksheet_name) {
+  try {
+
+    const sheet = doc.sheetsByTitle[worksheet_name]
+    const title = sheet.title ? sheet.title.trim() : ''
+    const rows = await sheet.getRows()
+    const rows_in_sheet = rows.length + 1
+    log(chalk.grey(`${title} has ${rows_in_sheet} rows including the header`))
+
+    let arr = []
+
+    // NEED TO ADD COLUMN HEADERS FIRST!!!
+    // Push the header values AKA (campaign names) to first row
+    arr.push(sheet.headerValues);
+
+
+    for (let j = 0; j < rows.length; j++) {
+      let row = rows[j]._rawData
+      arr.push(row)
+    }
 
     return arr
   } catch (e) {
     log(e)
   }
+}
+
+async function convertRowsToColumns(rows) {
+  // Sheet data is read in as rows but we need to convert them to columns
+  // In addition we want to remove any empty strings, columns & campaigns
+
+  const result = [];
+
+  for (let i = 0; i < rows[0].length; i++) {
+    const col = [];
+    for (let j = 0; j < rows.length; j++) {
+      let data = rows[j][i];
+      // Need to make sure the keyword exists and is not empty or undefined
+      if (data) {
+        col.push(data);
+      }
+    }
+    // If the column is not empty, and there is at least 1 keyword per campaign
+    if (col && col.length > 1) {
+      result.push(col);
+    }
+  }
+
+  return result;
 }
 
 // async function read_all_worksheets(sheets_doc) {
@@ -219,6 +262,7 @@ module.exports = {
   // extract_sheet_id_from_url,
   // get_keywords_arr_from_rows,
   connect,
-  read_worksheets,
+  read_as_columns,
+  read_as_rows
   // read_all_worksheets,
 }

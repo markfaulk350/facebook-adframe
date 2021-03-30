@@ -53,24 +53,21 @@ async function main() {
 
   const account = await fb.initAccount(accessToken, accountId)
 
-  const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY',)
+  const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
 
-  const sheet = doc.sheetsByIndex[0] // or use doc.sheetsById[id] or doc.sheetsByTitle[title]
-  console.log(sheet.title)
-  console.log(sheet.rowCount)
+  const data = await sheets.read_as_columns(doc, "Transactly States")
+  // log(data)
 
-  const data = await sheets.read_worksheets(doc)
+  // let states = []
 
-  let states = []
+  // // For each region get info
+  // for (let i = 0; i < data[0].length; i++) {
+  //   const keyword = data[0][i]
+  //   const region = await fb.getRegionId(accessToken, keyword, 10)
+  //   states.push(region)
+  // }
 
-  // For each region get info
-  for (let i = 0; i < data.length; i++) {
-    const keyword = data[i]
-    const region = await fb.getRegionId(accessToken, keyword, 10)
-    states.push(region)
-  }
-
-  log(states)
+  // log(states)
 
   // Save state info to a new G Sheet
   // const new_sheet = await doc.addSheet({
@@ -81,23 +78,23 @@ async function main() {
   
 
   // Loop over each state, create campaign, then use ID to create Ad Set
-  for (let i = 0; i < states.length; i++) {
-    const state = states[i]
+  // for (let i = 0; i < states.length; i++) {
+  //   const state = states[i]
 
-    const new_campaign = await fb.createCampaign(account, state.name)
-    // log(new_campaign)
-    const new_campaign_id = new_campaign._data.id
-    log(`New "${state.name}" Campaign ID: ${new_campaign_id}`)
+  //   const new_campaign = await fb.createCampaign(account, state.name)
+  //   // log(new_campaign)
+  //   const new_campaign_id = new_campaign._data.id
+  //   log(`New "${state.name}" Campaign ID: ${new_campaign_id}`)
 
-    const new_ad_set = await createAdSet(
-      account,
-      new_campaign_id,
-      state.name,
-      state
-    )
-    // log(new_ad_set)
-    log(new_ad_set._data.id)
-  }
+  //   const new_ad_set = await createAdSet(
+  //     account,
+  //     new_campaign_id,
+  //     state.name,
+  //     state
+  //   )
+  //   // log(new_ad_set)
+  //   log(new_ad_set._data.id)
+  // }
 
   log(chalk.redBright(`---------- Ending Facebook Script ----------`))
 }
