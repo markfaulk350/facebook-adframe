@@ -106,10 +106,13 @@ async function read_rows_as_objects(doc, worksheet_name) {
 
         // What is the key?
         // In our case, the first row, and the index of the header in the row.
-        new_obj[row[0][j]] = row_item
+        new_obj[rows[0][j]] = row_item
       }
 
-      new_arr.push(new_obj)
+      // Do not push first row containing header values
+      if(i !== 0) {
+        new_arr.push(new_obj)
+      }
     }
 
     return new_arr
