@@ -55,11 +55,14 @@ async function main() {
 
   const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
 
-  const objs = await sheets.read_rows_as_objects(doc, "US States")
-  log(objs)
+  // const states = await sheets.read_rows_as_objects(doc, "US States")
+  // log(states)
 
-  // const columns = await sheets.read_as_columns(doc, "Adsets")
+  // const columns = await sheets.read_as_columns(doc, "Adsets", true)
   // log(columns)
+
+  const columns = await sheets.read_columns_as_objects(doc, "Adsets")
+  log(columns)
 
   
 

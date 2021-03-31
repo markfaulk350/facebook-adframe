@@ -146,6 +146,37 @@ async function convertRowsToColumns(rows) {
   return result;
 }
 
+async function read_columns_as_objects(doc, worksheet_name) {
+  try {
+    const columns = await read_as_columns(doc, worksheet_name, true)
+
+    // Now we have 
+    // columns = [
+    //   ['title', 'adset 1', 'adset 2', 'adset 3'],
+    //   ['title', 'adset 1', 'adset 2', 'adset 3']
+    // ]
+    // And we want
+    // [{title: 'Credit', list: ['adset 1', 'adset 2', 'adset 3']}]
+
+    new_arr = []
+
+    // For each column
+    for (let i = 0; i < columns.length; i++) {
+      const column = columns[i];
+
+      new_arr.push({
+        title: column[0],
+        list: column.slice(1)
+      })
+    }
+
+    return new_arr
+
+  } catch (e) {
+    log(e)
+  }
+}
+
 // async function read_all_worksheets(sheets_doc) {
 
 //   for (let i = 0; i < sheets_doc.sheetsByIndex.length; i++) {
@@ -305,6 +336,7 @@ module.exports = {
   connect,
   read_as_columns,
   read_as_rows,
-  read_rows_as_objects
+  read_rows_as_objects,
+  read_columns_as_objects
   // read_all_worksheets,
 }
