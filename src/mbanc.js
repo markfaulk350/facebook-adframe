@@ -53,26 +53,41 @@ async function main() {
 
   const account = await fb.initAccount(accessToken, accountId)
 
-  const doc = await sheets.connect('1tczjiBNSlHTqZ7lYdIujjn0LVaba69S6w5i5T7Rm4gY')
+  const doc = await sheets.connect('1ig8bwH7titTnJZAA-zHfTIr_dcWJGvZRY54SJeSA2FQ')
 
-  // const states = await sheets.read_rows_as_objects(doc, "US States")
-  // log(states)
+  const states = await sheets.read_rows_as_objects(doc, "Mbanc States - RAW")
+  log(states)
 
-  // const columns = await sheets.read_as_columns(doc, "Adsets", true)
-  // log(columns)
-
-  const columns = await sheets.read_columns_as_objects(doc, "Adsets")
+  const interest_lists = await sheets.read_columns_as_objects(doc, "Thematic - TEST")
   log(columns)
 
   
 
-  // Need to read the list of states x 24
+  // Read RAW list of states x 24
+  // Get info for those states & save to a new worksheet
 
-  // Need to read the lists of Ad Sets with Interests x 23 x someNumber
+  // Read Raw lists of interests from G Sheets
+  // Read list of Processed interests form G Sheets
 
-  // Need to get state info
+  // Compile a list with all interests & dedupe
+  // Determine what interests we dont have stored, make api calls for those interests info & update the G Sheet.
+  // Match each interests info with its interest in each list
 
-  // For Each State, Create a campaign. Then create every Ad Set with all of its asigned interests
+  // Create 23 campaigns, each named after a state
+  // Create Ad Sets for each interest list, target geolocation, + add all interests
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
