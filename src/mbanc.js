@@ -6,14 +6,12 @@ const helpers = require('./helpers')
 const log = console.log
 
 async function createAdSet(account, campaign_id, name, state) {
-
   const unix_time = Date.now()
   const iso_string = new Date(unix_time).toISOString()
   let start_time = iso_string.split('.')[0]
   start_time += '-0000'
 
   try {
-
     const new_ad_set = await account.createAdSet([], {
       campaign_id,
       name: `[AG] ${name}`,
@@ -47,20 +45,32 @@ async function createAdSet(account, campaign_id, name, state) {
 
 // Run
 async function main() {
-  log(chalk.greenBright(`---------- Running Facebook Transactly Script ----------`))
+  log(
+    chalk.greenBright(
+      `---------- Running Facebook Transactly Script ----------`,
+    ),
+  )
 
   const accessToken = process.env.FB_ACCESS_TOKEN
   const accountId = process.env.FB_AD_ACCOUNT_ID
 
   const account = await fb.initAccount(accessToken, accountId)
 
-  const doc = await sheets.connect('1ig8bwH7titTnJZAA-zHfTIr_dcWJGvZRY54SJeSA2FQ')
+  const doc = await sheets.connect(
+    '1ig8bwH7titTnJZAA-zHfTIr_dcWJGvZRY54SJeSA2FQ',
+  )
 
   // const states = await sheets.read_rows_as_objects(doc, "Mbanc States - RAW")
   // log(states)
 
-  const interest_lists = await sheets.read_columns_as_objects(doc, "Thematic - TEST")
+  // const interest_lists = await sheets.read_columns_as_objects(doc, "Thematic - TEST")
+  let interest_lists = await sheets.read_columns_as_objects(
+    doc,
+    'Adset Structure - TEST',
+  )
   // log(columns)
+
+  // NEED TO DEDUPE EACH INTEREST LIST!
 
   // Push each interest list into a single list
   let all_interests = []
@@ -87,7 +97,7 @@ async function main() {
   for (let interest of unique_interests) {
     const info = await fb.getInterestId(accessToken, interest, 10)
 
-    if(info && info.keyword && info.id) {
+    if (info && info.keyword && info.id) {
       dict.push(info)
     } else {
       missing_dict.push(info)
@@ -96,19 +106,57 @@ async function main() {
   // log(dict)
   // log(missing_dict)
 
-  // const new_sheet = await doc.addSheet({title: 'Generated Unique Interests', headerValues: ['keyword', 'id', 'audience']})
+  // const new_sheet = await doc.addSheet({
+  //   title: 'Generated Unique Interests - TEST',
+  //   headerValues: ['keyword', 'id', 'audience'],
+  // })
   // await new_sheet.addRows(dict)
 
-  // if(missing_dict.length > 0) {
-  //   const new_unmatched_sheet = await doc.addSheet({title: 'Unmatched Interests', headerValues: ['keyword', 'id', 'audience']})
+  // if (missing_dict.length > 0) {
+  //   const new_unmatched_sheet = await doc.addSheet({
+  //     title: 'Unmatched Interests - TEST',
+  //     headerValues: ['keyword', 'id', 'audience'],
+  //   })
   //   await new_unmatched_sheet.addRows(missing_dict)
   // }
 
+  // Now we need to match each interest, in each group with its info
+  // interest_lists = [
+  //   {
+  //     title: 'Credit',
+  //     list: ['Credit history'],
+  //     // Only add or load objects containing ID's
+  //     list_w_objects: [{keyword: 'Credit history', id: '6003424627940'}],
+  //   },
+  // ]
 
+  for (let i = 0; i < interest_lists.length; i++) {
+    const interest_list = interest_lists[i];
+
+    let list_w_objects = []
+
+    // Loop through interest_list to find match and append if so
+    // Remember to match on lowerCase()
+
+    for (let interest of interest_list.list) {
+
+      // Find matching object
+      let obj = dict.find(el => el.keyword.toLowerCase() == interest.toLowerCase())
+
+      if(obj) {
+        list_w_objects.push(obj)
+      }
+
+    }
+
+    interest_list.list_w_objects = list_w_objects
+  }
+
+  log(interest_lists)
+  log(interest_lists[0].list_w_objects)
 
 
   // Need to cross reference what interests we already have with what is needed
-  
 
   // Read RAW list of states x 24
   // Get info for those states & save to a new worksheet
@@ -123,58 +171,7 @@ async function main() {
   // Create 23 campaigns, each named after a state
   // Create Ad Sets for each interest list, target geolocation, + add all interests
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  // let states = []
-
-  // For each region get info
-  // for (let i = 0; i < data.length; i++) {
-  //   const keyword = data[i]
-  //   const region = await fb.getRegionId(accessToken, keyword, 10)
-  //   states.push(region)
-  // }
-
-  // log(states)
-
-  // Save state info to a new G Sheet
-  // const new_sheet = await doc.addSheet({
-  //   title: 'US States',
-  //   headerValues: ['key', 'name', 'country_code'],
-  // })
-  // const more_rows = await new_sheet.addRows(states)
-  
-
-  // Loop over each state, create campaign, then use ID to create Ad Set
-  // for (let i = 0; i < states.length; i++) {
-  //   const state = states[i]
-
-  //   const new_campaign = await fb.createCampaign(account, state.name)
-  //   // log(new_campaign)
-  //   const new_campaign_id = new_campaign._data.id
-  //   log(`New "${state.name}" Campaign ID: ${new_campaign_id}`)
-
-  //   const new_ad_set = await createAdSet(
-  //     account,
-  //     new_campaign_id,
-  //     state.name,
-  //     state
-  //   )
-  //   // log(new_ad_set)
-  //   log(new_ad_set._data.id)
-  // }
+  // We have 24 states to create campaigns for
 
   log(chalk.redBright(`---------- Ending Facebook Script ----------`))
 }

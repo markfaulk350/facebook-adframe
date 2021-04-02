@@ -5,8 +5,9 @@ const sheets = require('./sheets')
 const log = console.log
 // Need to add variable for pixel ID
 const TRANSACTLY_PIXEL_ID = '113947709530596'
+const MARKS_PIXEL_ID = '2796607230588778'
 
-async function createAdSet(account, campaign_id, name, state) {
+async function createAdSet(account, campaign_id, state, pixel_id) {
 
   const unix_time = Date.now()
   const iso_string = new Date(unix_time).toISOString()
@@ -17,7 +18,7 @@ async function createAdSet(account, campaign_id, name, state) {
 
     const new_ad_set = await account.createAdSet([], {
       campaign_id,
-      name: `[AG] ${name}`,
+      name: `[AG] ${state.name}`,
       status: 'PAUSED',
       billing_event: 'IMPRESSIONS',
       optimization_goal: 'OFFSITE_CONVERSIONS',
@@ -35,7 +36,7 @@ async function createAdSet(account, campaign_id, name, state) {
         },
       },
       promoted_object: {
-        pixel_id: TRANSACTLY_PIXEL_ID,
+        pixel_id,
         custom_event_type: 'LEAD',
       },
     })
@@ -50,13 +51,13 @@ async function createAdSet(account, campaign_id, name, state) {
 async function main() {
   log(chalk.greenBright(`---------- Running Facebook Transactly Script ----------`))
 
-  // const accessToken = process.env.FB_ACCESS_TOKEN
-  // const accountId = process.env.FB_AD_ACCOUNT_ID
-  // const account = await fb.initAccount(accessToken, accountId) // Mark's Test Creds
+  const accessToken = process.env.FB_ACCESS_TOKEN
+  const accountId = process.env.FB_AD_ACCOUNT_ID
+  const account = await fb.initAccount(accessToken, accountId) // Mark's Test Creds
 
-  const transactlyAccessToken = process.env.TRANSACTLY_FB_ACCESS_TOKEN
-  const transactlyAccountId = process.env.TRANSACTLY_FB_AD_ACCOUNT_ID
-  const account = await fb.initAccount(transactlyAccessToken, transactlyAccountId) // Transactly Creds
+  // const transactlyAccessToken = process.env.TRANSACTLY_FB_ACCESS_TOKEN
+  // const transactlyAccountId = process.env.TRANSACTLY_FB_AD_ACCOUNT_ID
+  // const account = await fb.initAccount(transactlyAccessToken, transactlyAccountId) // Transactly Creds
 
   // const new_campaign = await fb.createCampaign(account, "TEST")
   // log(new_campaign)
@@ -85,26 +86,24 @@ async function main() {
   // const more_rows = await new_sheet.addRows(states)
 
   const states = await sheets.read_rows_as_objects(doc, "Transactly States - PROCESSED")
-  // log(states)
-  
 
   // Loop over each state, create campaign, then use ID to create Ad Set
-  for (let i = 0; i < states.length; i++) {
-    const state = states[i]
+  for (let state of states) {
 
     const new_campaign = await fb.createCampaign(account, state.name)
-    // log(new_campaign)
     const new_campaign_id = new_campaign._data.id
-    log(`New "${state.name}" Campaign ID: ${new_campaign_id}`)
+    log(`[C] ${state.name} created w ID: ${new_campaign_id}`)
 
     const new_ad_set = await createAdSet(
       account,
       new_campaign_id,
-      state.name,
-      state
+      state,
+      // TRANSACTLY_PIXEL_ID
+      MARKS_PIXEL_ID
     )
-    // log(new_ad_set)
-    log(new_ad_set._data.id)
+    const new_ad_set_id = new_ad_set._data.id
+    log(`[AG] ${state.name} created w ID: ${new_ad_set_id}`)
+
   }
 
   log(chalk.redBright(`---------- Ending Facebook Script ----------`))
