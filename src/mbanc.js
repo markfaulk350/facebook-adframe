@@ -2,6 +2,7 @@ require('dotenv').config()
 const chalk = require('chalk')
 const fb = require('./fb')
 const sheets = require('./sheets')
+const helpers = require('./helpers')
 const log = console.log
 
 async function createAdSet(account, campaign_id, name, state) {
@@ -55,12 +56,58 @@ async function main() {
 
   const doc = await sheets.connect('1ig8bwH7titTnJZAA-zHfTIr_dcWJGvZRY54SJeSA2FQ')
 
-  const states = await sheets.read_rows_as_objects(doc, "Mbanc States - RAW")
-  log(states)
+  // const states = await sheets.read_rows_as_objects(doc, "Mbanc States - RAW")
+  // log(states)
 
   const interest_lists = await sheets.read_columns_as_objects(doc, "Thematic - TEST")
-  log(columns)
+  // log(columns)
 
+  // Push each interest list into a single list
+  let all_interests = []
+
+  interest_lists.forEach(el => {
+    all_interests.push(...el.list)
+  })
+
+  // Convert interests to lowercase
+  all_interests = all_interests.map(interest => {
+    return interest.toLowerCase()
+  })
+
+  // Remove duplicate interests
+  let unique_interests = helpers.dedupeArray(all_interests)
+
+  log(`${all_interests.length} interests`)
+  log(`${unique_interests.length} unique interests`)
+
+  // For now lets just generate a new sheet with the unique interests
+  let dict = []
+  let missing_dict = []
+
+  for (let interest of unique_interests) {
+    const info = await fb.getInterestId(accessToken, interest, 10)
+
+    if(info && info.keyword && info.id) {
+      dict.push(info)
+    } else {
+      missing_dict.push(info)
+    }
+  }
+  // log(dict)
+  // log(missing_dict)
+
+  // const new_sheet = await doc.addSheet({title: 'Generated Unique Interests', headerValues: ['keyword', 'id', 'audience']})
+  // await new_sheet.addRows(dict)
+
+  // if(missing_dict.length > 0) {
+  //   const new_unmatched_sheet = await doc.addSheet({title: 'Unmatched Interests', headerValues: ['keyword', 'id', 'audience']})
+  //   await new_unmatched_sheet.addRows(missing_dict)
+  // }
+
+
+
+
+  // Need to cross reference what interests we already have with what is needed
   
 
   // Read RAW list of states x 24
