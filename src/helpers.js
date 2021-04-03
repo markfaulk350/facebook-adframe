@@ -13,7 +13,12 @@ function dedupeArray(arr) {
   return deduped
 }
 
+function convertListToLowerCase(list) {
+  return list.map(el => el.toLowerCase())
+}
+
 module.exports = {
   sleep,
-  dedupeArray
+  dedupeArray,
+  convertListToLowerCase
 }

@@ -5,7 +5,10 @@ const sheets = require('./sheets')
 const helpers = require('./helpers')
 const log = console.log
 
-async function createAdSet(account, campaign_id, name, state) {
+const TRANSACTLY_PIXEL_ID = '113947709530596'
+const MARKS_PIXEL_ID = '2796607230588778'
+
+async function createAdSet(account, campaign_id, name, state, interests, pixel_id) {
   const unix_time = Date.now()
   const iso_string = new Date(unix_time).toISOString()
   let start_time = iso_string.split('.')[0]
@@ -22,9 +25,10 @@ async function createAdSet(account, campaign_id, name, state) {
       targeting: {
         age_min: 18,
         age_max: 65,
-        // flexible_spec: [
-        //   { interests: [{ id: 6003353550130, name: 'Motorcycles' }] },
-        // ],
+        flexible_spec: [
+          { interests },
+          // { interests: [{ id: 6003353550130, name: 'Motorcycles' }] },
+        ],
         geo_locations: {
           regions: [
             { key: state.key, name: state.name, country: state.country_code },
@@ -32,7 +36,7 @@ async function createAdSet(account, campaign_id, name, state) {
         },
       },
       promoted_object: {
-        pixel_id: '2796607230588778',
+        pixel_id,
         custom_event_type: 'LEAD',
       },
     })
@@ -45,32 +49,34 @@ async function createAdSet(account, campaign_id, name, state) {
 
 // Run
 async function main() {
-  log(
-    chalk.greenBright(
-      `---------- Running Facebook Transactly Script ----------`,
-    ),
-  )
+  try {
+    
+  log(chalk.greenBright(`---------- Running Facebook Transactly Script ----------`))
 
   const accessToken = process.env.FB_ACCESS_TOKEN
   const accountId = process.env.FB_AD_ACCOUNT_ID
-
   const account = await fb.initAccount(accessToken, accountId)
 
-  const doc = await sheets.connect(
-    '1ig8bwH7titTnJZAA-zHfTIr_dcWJGvZRY54SJeSA2FQ',
-  )
+  // const transactlyAccessToken = process.env.TRANSACTLY_FB_ACCESS_TOKEN
+  // const transactlyAccountId = process.env.TRANSACTLY_FB_AD_ACCOUNT_ID
+  // const account = await fb.initAccount(transactlyAccessToken, transactlyAccountId)
 
-  // const states = await sheets.read_rows_as_objects(doc, "Mbanc States - RAW")
+  const doc = await sheets.connect('1ig8bwH7titTnJZAA-zHfTIr_dcWJGvZRY54SJeSA2FQ')
+
+  const states = await sheets.read_rows_as_objects(doc, "Mbanc States - TEST")
   // log(states)
 
-  // const interest_lists = await sheets.read_columns_as_objects(doc, "Thematic - TEST")
-  let interest_lists = await sheets.read_columns_as_objects(
-    doc,
-    'Adset Structure - TEST',
-  )
-  // log(columns)
+  let interest_lists = await sheets.read_columns_as_objects(doc,'Adset Structure - TEST')
 
-  // NEED TO DEDUPE EACH INTEREST LIST!
+  // DEDUPE EACH INTEREST LIST!
+  for(let interest_list of interest_lists) {
+    let copy = interest_list.list
+
+    // Need to convert each interest to lowercase, then dedupe, then replace the list
+    copy = helpers.convertListToLowerCase(copy)
+    copy = helpers.dedupeArray(copy)
+    interest_list.list = copy
+  }
 
   // Push each interest list into a single list
   let all_interests = []
@@ -80,11 +86,9 @@ async function main() {
   })
 
   // Convert interests to lowercase
-  all_interests = all_interests.map(interest => {
-    return interest.toLowerCase()
-  })
+  // all_interests = helpers.convertListToLowerCase(all_interests)
 
-  // Remove duplicate interests
+  // Remove duplicate interests with entire sheet in mind
   let unique_interests = helpers.dedupeArray(all_interests)
 
   log(`${all_interests.length} interests`)
@@ -130,14 +134,13 @@ async function main() {
   //   },
   // ]
 
+  // Loop through interest_lists to match interest objects
   for (let i = 0; i < interest_lists.length; i++) {
     const interest_list = interest_lists[i];
 
     let list_w_objects = []
 
-    // Loop through interest_list to find match and append if so
-    // Remember to match on lowerCase()
-
+    // Loop through interest_list to find match
     for (let interest of interest_list.list) {
 
       // Find matching object
@@ -146,17 +149,46 @@ async function main() {
       if(obj) {
         list_w_objects.push(obj)
       }
-
     }
-
     interest_list.list_w_objects = list_w_objects
   }
+  // log(interest_lists)
+  // log(interest_lists[0].list_w_objects)
 
-  log(interest_lists)
-  log(interest_lists[0].list_w_objects)
+  for(let state of states) {
+
+    const new_campaign = await fb.createCampaign(account, state.name)
+    const new_campaign_id = new_campaign._data.id
+    log(`[C] ${state.name} created w ID: ${new_campaign_id}`)
 
 
-  // Need to cross reference what interests we already have with what is needed
+    for(let list of interest_lists) {
+
+      let interests = list.list_w_objects.map(el => {
+        return {
+          id: el.id,
+          name: el.keyword
+        }
+      })
+
+      // Create an AdSet with name of interest_list
+      // add list of interests to AdSet
+      const new_ad_set = await createAdSet(
+      account,
+      new_campaign_id,
+      list.title,
+      state,
+      interests,
+      // TRANSACTLY_PIXEL_ID
+      MARKS_PIXEL_ID
+    )
+    const new_ad_set_id = new_ad_set._data.id
+    log(`[AG] ${list.title} created w ID: ${new_ad_set_id}`)
+    }
+
+  }
+
+
 
   // Read RAW list of states x 24
   // Get info for those states & save to a new worksheet
@@ -174,6 +206,9 @@ async function main() {
   // We have 24 states to create campaigns for
 
   log(chalk.redBright(`---------- Ending Facebook Script ----------`))
+} catch (e) {
+  log(e)
+}
 }
 
 main()
