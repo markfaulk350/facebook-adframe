@@ -2,6 +2,8 @@
 
 const log = console.log
 
+const helpers = require('./helpers')
+
 
 const axios = require('axios')
 const bizSdk = require('facebook-nodejs-business-sdk')
@@ -223,7 +225,6 @@ async function getRegionId(access_token, keyword, limit) {
     log(e)
   }
 }
-
 
 module.exports = {
   initAccount,
