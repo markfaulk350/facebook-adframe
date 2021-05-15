@@ -12,6 +12,7 @@
     "dotenv": "^8.2.0",
     "facebook-nodejs-business-sdk": "^10.0.0",
     "google-spreadsheet": "^3.1.15",
+    "lodash": "^4.17.21",
     "ora": "^5.3.0"
   }
 }
