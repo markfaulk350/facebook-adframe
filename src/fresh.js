@@ -16,9 +16,22 @@ const MARKS_PIXEL_ID = '2796607230588778'
 const accessToken = process.env.FB_ACCESS_TOKEN
 const accountId = process.env.FB_AD_ACCOUNT_ID
 
+const ryansAccessToken = process.env.RYANS_FB_ACCESS_TOKEN
+
 const TRANSACTLY_PIXEL_ID = '113947709530596'
-const transactlyAccessToken = process.env.TRANSACTLY_FB_ACCESS_TOKEN
 const transactlyAccountId = process.env.TRANSACTLY_FB_AD_ACCOUNT_ID
+
+const MBANC_PIXEL_ID = '2244670849078602'
+const mbancAccountId = process.env.MBANC_FB_AD_ACCOUNT_ID
+
+const CENTER_STREET_PIXEL_ID = '485535825539786'
+const centerStreetAccountId = process.env.CENTER_STREET_FB_AD_ACCOUNT_ID
+
+const EXPRESS_CAPITAL_PIXEL_ID = '186805342996734'
+const expressCapitalAccountId = process.env.EXPRESS_CAPITAL_FB_AD_ACCOUNT_ID
+
+const HOME_CONNECT_PIXEL_ID = ''
+const homeConnectAccountId = process.env.HOME_CONNECT_FB_AD_ACCOUNT_ID
 
 
 async function initAccount(accessToken, accountId) {
@@ -118,8 +131,13 @@ async function createResources(campaigns, account) {
           new_campaign_id,
           adgroup.adgroup_name,
           interests,
-          TRANSACTLY_PIXEL_ID
+          // TRANSACTLY_PIXEL_ID
+          // MBANC_PIXEL_ID
           // MARKS_PIXEL_ID,
+          // CENTER_STREET_PIXEL_ID
+          EXPRESS_CAPITAL_PIXEL_ID
+          // HOME_CONNECT_PIXEL_ID
+
         )
 
         if (new_ad_set && new_ad_set._data && new_ad_set._data.id) {
@@ -217,7 +235,11 @@ async function main() {
     
     // CONNECT TO FACEBOOK API W CREDENTIALS
     // const account = await initAccount(accessToken, accountId)
-    const account = await initAccount(transactlyAccessToken, transactlyAccountId)
+    // const account = await initAccount(ryansAccessToken, transactlyAccountId)
+    // const account = await initAccount(ryansAccessToken, mbancAccountId)
+    // const account = await initAccount(ryansAccessToken, centerStreetAccountId)
+    const account = await initAccount(ryansAccessToken, expressCapitalAccountId)
+    // const account = await initAccount(ryansAccessToken, homeConnectAccountId)
 
 
     await createResources(campaigns, account)
